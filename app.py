@@ -13,7 +13,6 @@ st.markdown("""
 
 * { font-family: 'DM Sans', sans-serif; box-sizing: border-box; }
 
-/* ── Kill the white strip ── */
 header[data-testid="stHeader"],
 header[data-testid="stHeader"] > * {
     display: none !important;
@@ -28,17 +27,14 @@ footer    { display: none !important; }
 div[data-testid="stAppViewBlockContainer"] { padding-top: 2rem !important; }
 .block-container { padding-top: 2rem !important; max-width: 1200px; }
 
-/* ── Background ── */
 .stApp { background: #f0f2f5; }
 
-/* ── Title ── */
 .main-title {
     font-size: 30px; font-weight: 700; color: #0d1117;
     letter-spacing: -0.5px; margin-bottom: 2px;
 }
 .subtitle { color: #6b7280; font-size: 13px; margin-bottom: 28px; }
 
-/* ── Metric Cards ── */
 .metric-card {
     background: #fff; border-radius: 12px; padding: 20px 18px;
     border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -56,22 +52,18 @@ div[data-testid="stAppViewBlockContainer"] { padding-top: 2rem !important; }
     font-family: 'DM Mono', monospace; letter-spacing: -0.5px;
 }
 
-/* ── Section Card ── */
-
 .section-title {
     font-size: 14px; font-weight: 600; color: #0d1117;
     margin-bottom: 3px;
 }
 .section-desc { font-size: 12px; color: #9ca3af; margin-bottom: 16px; }
 
-/* ── Trained Banner ── */
 .trained-banner {
     background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px;
     padding: 11px 16px; margin-bottom: 18px; font-size: 13px;
     font-weight: 600; color: #15803d;
 }
 
-/* ── Predict Result ── */
 .predict-result {
     background: #0d1117; border-radius: 12px; padding: 30px 24px;
     text-align: center; margin-top: 18px; border: 1px solid #1f2937;
@@ -86,7 +78,6 @@ div[data-testid="stAppViewBlockContainer"] { padding-top: 2rem !important; }
 }
 .predict-diff { font-size: 13px; margin-top: 8px; color: #6b7280; font-weight: 500; }
 
-/* ── Streamlit overrides ── */
 div[data-testid="stRadio"] label { color: #374151 !important; font-size: 14px !important; font-weight: 500 !important; }
 div[data-testid="stSelectbox"] label,
 div[data-testid="stNumberInput"] label { color: #374151 !important; font-weight: 500 !important; font-size: 13px !important; }
@@ -119,12 +110,10 @@ h1, h2, h3  { color: #0d1117; }
 """, unsafe_allow_html=True)
 
 
-# ── Header ───────────────────────────────────────────────────────────────────
 st.markdown("<div class='main-title'>AI Stock Price Predictor</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>Predict future stock closing prices using linear regression on market data.</div>", unsafe_allow_html=True)
 
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
 def get_last(df, col):
     s = df[col]
     if isinstance(s, pd.DataFrame):
@@ -138,7 +127,6 @@ def flatten_columns(df):
     return df
 
 
-# ── Data Source ───────────────────────────────────────────────────────────────
 st.markdown("<div class='section-card'>", unsafe_allow_html=True)
 st.markdown("<div class='section-title'>Data Source</div>", unsafe_allow_html=True)
 st.markdown("<div class='section-desc'>Choose between a local CSV file or live market data via Yahoo Finance.</div>", unsafe_allow_html=True)
@@ -197,7 +185,6 @@ else:
     st.success(f"Live data loaded for {stock_name}.")
 
 
-# ── Data Prep ────────────────────────────────────────────────────────────────
 df["Date"] = pd.to_datetime(df["Date"])
 df = df.dropna(subset=["Open", "High", "Low", "Close"]).reset_index(drop=True)
 
@@ -207,7 +194,6 @@ last_high  = get_last(df, "High")
 last_low   = get_last(df, "Low")
 
 
-# ── Metric Cards ─────────────────────────────────────────────────────────────
 col1, col2, col3, col4 = st.columns(4)
 cards = [
     ("Current Price", f"{currency}{last_price:.2f}", col1),
@@ -226,7 +212,6 @@ for label, value, col in cards:
 st.markdown("<div style='margin-top:18px'></div>", unsafe_allow_html=True)
 
 
-# ── Recent Data Table ────────────────────────────────────────────────────────
 st.markdown("<div class='section-card'>", unsafe_allow_html=True)
 st.markdown("<div class='section-title'>Recent Market Data</div>", unsafe_allow_html=True)
 st.markdown("<div class='section-desc'>Last 10 trading sessions.</div>", unsafe_allow_html=True)
@@ -238,7 +223,6 @@ st.dataframe(display_df, use_container_width=True, hide_index=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
 
-# ── Professional Plotly Candlestick Chart ─────────────────────────────────────
 st.markdown("<div class='section-card'>", unsafe_allow_html=True)
 st.markdown("<div class='section-title'>Price Chart — 1 Year</div>", unsafe_allow_html=True)
 st.markdown("<div class='section-desc'>Candlestick OHLC with MA20 and MA50 moving averages. Hover for details.</div>", unsafe_allow_html=True)
@@ -314,7 +298,6 @@ st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
 st.markdown("</div>", unsafe_allow_html=True)
 
 
-# ── Model Training ───────────────────────────────────────────────────────────
 model_df = df[["Open", "High", "Low", "Close"]].dropna().copy()
 for col in ["Open", "High", "Low", "Close"]:
     if isinstance(model_df[col], pd.DataFrame):
@@ -335,7 +318,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ── Prediction ───────────────────────────────────────────────────────────────
 st.markdown("<div class='section-card'>", unsafe_allow_html=True)
 st.markdown("<div class='section-title'>Price Prediction</div>", unsafe_allow_html=True)
 st.markdown("<div class='section-desc'>Enter Open, High, and Low values to estimate the closing price.</div>", unsafe_allow_html=True)
